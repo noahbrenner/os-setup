@@ -116,30 +116,35 @@ apt-get purge --autoremove ${toRemove[@]}
 
 # Install programs
 toInstall=(
+  # at # Schedule a one-time command to run later
+  curl
   encfs # encrypted virtual filesystem
   ffmpeg # transcode audio and video files
   firejail # sandbox, particularly useful for firefox
   flac # TODO decide on this
+  git
   libhal1-flash # enables playing DRM flash content in Firefox
   libimage-exiftool-perl # provides exiftool
   build-essential # C libraries, needed to compile sc-im
   libncurses5-dev # needed to compile (and run?) sc-im
   libncursesw5-dev # needed to compile (and run?) sc-im
+  # linkchecker # TODO decide on this (check websites for broken links)
+  nmap # provides ncat for testing HTTP requests and responses
+  pdftk
+  # python-pip # For Python 2
+  python3-pip python3-venv # Both needed for pipenv
   python3-tk # tkinter for Python3
   sc # "spreadsheet calculator" (or do I want to install sc-im [manually]?)
   traceroute # trace the path of ip packets
-  vim-gtk3 # hooray vim!
+  tree # display directories in a tree structure
+  vim-gtk3 # Also uses Python 3 rather than 2
   vlc # vlc media player
-  # wine #TODO decide on this
+  # wine # TODO decide on this
+  zopfli # gzip compressor, but accomplishes better compression than `gzip`
 )
 # TODO Other programs I'll likely add:
 # idle
 # idle3
-# tree
-
-# Install git
-# TODO remove the following command if this file is fetched from git (it will eventually)
-toInstall+=(git)
 
 # Install Node.js
 # TODO change this if I install a different way (to use a more recent version)
