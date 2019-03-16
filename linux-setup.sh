@@ -20,6 +20,15 @@
 # test for laptop vs desktop
 # http://superuser.com/questions/877677/programatically-determine-if-an-script-is-being-executed-on-laptop-or-desktop
 
+# TODO Make sure these are installed (some might be bundled with others)
+# - xelatex
+#   - https://tex.stackexchange.com/questions/179778/xelatex-under-ubuntu
+#   - XeLatex is a part of `texlive-xetex` package.
+#     To install, run the following command: `sudo apt-get install texlive-xetex`
+# - chktex
+# - lacheck
+# - ? other linters that `ale` (vim plugin) can use
+
 # TODO check this file for default programs: /etc/gnome/defaults.list
 
 # Exit if not running as root (if the Effective User ID is not 0)
@@ -146,6 +155,10 @@ toInstall=(
 # - idle
 # - idle3
 
+# TODO Programs to check out
+# - cherrytree - hierarchical note taking application
+# - treesheets - Data organizer that covers spreadsheets, mind mappers, and small databases
+# - ytree - A file manager for terminals
 
 # TODO decide between these media players
 # toInstall+=(rhythmbox) # now the default on Linux Mint, has iPod compatibility
