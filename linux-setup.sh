@@ -162,6 +162,27 @@ toInstall+=(mint-meta-codecs)
 apt-get install --install-recommends ${toInstall[@]} #TODO is recommends needed?
 
 
+# Install pdfsizeopt - https://github.com/pts/pdfsizeopt
+# NOTE Check for new versions, since the version is hard-coded in the URL
+# TODO Do this in a subshell so that the working directory doesn't change
+# TODO Try installing dependencies separately, rather than downloading them from the repo
+# (without the optional dependencies, use the argument: --do-require-image-optimizers=no
+# - advpng
+# - ECT
+# - optipng
+# - zopflipng
+# - jbig (optional)
+# - pngout (optional)
+# TODO Add ~/pdfsizeopt to PATH
+# TODO Install pdftk and write a bash version of pdfcompress function
+sudo -u $thisuser -- mkdir ~/pdfsizeopt && cd $_ \
+  && curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
+  && tar  xzvf pdfsizeopt.tar.gz && rm -f $_ \
+  && curl -Lo pdfsizeopt \
+  https://raw.githubusercontent.com/pts/pdfsizeopt/master/pdfsizeopt.single \
+  && chmod +x pdfsizeopt
+
+
 #TODO
 # Install sc-im
 
