@@ -143,8 +143,8 @@ toInstall=(
   zopfli # gzip compressor, but accomplishes better compression than `gzip`
 )
 # TODO Other programs I'll likely add:
-# idle
-# idle3
+# - idle
+# - idle3
 
 
 # TODO decide between these media players
@@ -159,7 +159,7 @@ toInstall+=(chromium-browser)
 # if Linux Mint
 toInstall+=(mint-meta-codecs)
 
-apt-get install --install-recommends ${toInstall[@]} #TODO is recommends needed?
+apt-get install --install-recommends ${toInstall[@]} # TODO is recommends needed?
 
 
 # Install pdfsizeopt - https://github.com/pts/pdfsizeopt
@@ -183,7 +183,7 @@ sudo -u $thisuser -- mkdir ~/pdfsizeopt && cd $_ \
   && chmod +x pdfsizeopt
 
 
-#TODO
+# TODO
 # Install sc-im
 
 
