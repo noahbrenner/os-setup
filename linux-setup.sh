@@ -22,6 +22,11 @@
 
 # TODO check this file for default programs: /etc/gnome/defaults.list
 
+# Exit if not running as root (if the Effective User ID is not 0)
+if [[ $EUID -ne 0 ]]; then
+  echo This file must be run using sudo. Exiting.
+  exit
+fi
 
 # get user name
 thisuser=$(logname)
