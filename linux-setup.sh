@@ -146,11 +146,6 @@ toInstall=(
 # idle
 # idle3
 
-# Install Node.js
-# TODO change this if I install a different way (to use a more recent version)
-# toInstall+=(nodejs)
-# TODO add "alias node=nodejs" to ~/.bash_aliases when using apt's included version
-# CHANGE: using nvm instead
 
 # TODO decide between these media players
 # toInstall+=(rhythmbox) # now the default on Linux Mint, has iPod compatibility
@@ -176,14 +171,13 @@ sudo -u $thisuser -- curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
   && vim +PlugInstall +qall
 
-# Install nvm (Node Version Manager)
-# https://github.com/creationix/nvm
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+# Install nvm (Node Version Manager) -- https://github.com/creationix/nvm
+sudo -u $thisuser -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 # Set environment variables so we can use nvm without restarting the shell
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 # Install nodejs
-nvm install node
+sudo -u $thisuser -- nvm install node
 
 # Set up file(s) for custom firejail permissions
 # They will persist when updating firejail
