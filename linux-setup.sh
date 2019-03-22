@@ -2,24 +2,6 @@
 
 # Run this script using `sudo`
 
-
-# REFERENCES:
-
-# general
-# https://sites.google.com/site/easylinuxtipsproject/mint
-
-# for after os installation
-# https://sites.google.com/site/easylinuxtipsproject/first-mint-xfce
-
-# run browsers in the sandbox
-# https://sites.google.com/site/easylinuxtipsproject/sandbox
-
-# speed up the computer (perceived speed)
-# https://sites.google.com/site/easylinuxtipsproject/3
-
-# test for laptop vs desktop
-# http://superuser.com/questions/877677/programatically-determine-if-an-script-is-being-executed-on-laptop-or-desktop
-
 # TODO Make sure these are installed (some might be bundled with others)
 # - xelatex
 #   - https://tex.stackexchange.com/questions/179778/xelatex-under-ubuntu
