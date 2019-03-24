@@ -39,19 +39,6 @@ case $(ls -d /home/*/ | head -n 1 | sed 's,/^home/,,' | sed 's,/$,,') in
 esac
 
 
-
-# Make keyboard cooperate after waking computer from suspend
-# https://forums.linuxmint.com/viewtopic.php?t=152185
-# https://wiki.fogproject.org/wiki/index.php?title=Kernel_Parameters
-# (test for directory /sys/bus/platform/drivers/i8042 before running)
-sed -i \
-  's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 atkbd.reset i8042.nomux i8042.reset i8042.dumbkbd"/' \
-  /etc/default/grub
-# (check that it updated successfully)
-update-grub
-# (reboot needed, but that can be at the end of this script file)
-
-
 # Always install recommended package dependencies
 sed -i 's/\(Install-Recommends "\)[0-9]"/\11"/' /root/.synaptic/synaptic.conf
 # ^OR> Synaptic Package Manager: Settings > Preferences > "General" tab
@@ -215,9 +202,6 @@ sudo -u $thisuser -- cp /etc/firejail/chromium-browser.profile ~/.config/firejai
 # right-click browser icon > Properties > edit (pencil icon)
 # Command: prepend "firejail "
 
-
-# Adjust mouse pointer speed
-# Mouse and Touchpad > Pointer speed: 3 or 4
 
 # Disable hibernation
 mv /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla /
