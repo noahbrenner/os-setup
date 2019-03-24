@@ -23,19 +23,12 @@ fi
 thisuser=$(logname)
 
 
-# test if computer is a laptop
-# TODO test this logic
-echo -n "This script is being run on a "
-
-case $(ls -d /home/*/ | head -n 1 | sed 's,/^home/,,' | sed 's,/$,,') in
+# Determine whether this script is being run on a laptop
+case $(dmidecode --string chassis-type) in
   'Laptop'|'Notebook'|'Portable'|'Sub Notebook')
-    islaptop='true'
-    echo laptop.
-    ;;
+    isLaptop='true' ;;
   *)
-    islaptop='false'
-    echo desktop. # assumption
-    ;;
+    isLaptop='false' ;;
 esac
 
 
@@ -59,12 +52,9 @@ sed -i 's/^\(XKBOPTIONS="\)[^"]*"$/\1compose:menu"/' /etc/default/keyboard
 
 
 # Enable battery icon in system tray for laptops
-# (test for/ask if computer is a laptop)
-if [ "$islaptop" = "true" ]; then
-  # show battery icon in system tray
+if [[ "$isLaptop" == 'true' ]]; then
   : # TODO implement this
 fi
-# Power Manager: select "Show system tray icon"
 
 
 # Decrease swap use, improve RAM use
