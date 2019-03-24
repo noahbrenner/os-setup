@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Run this script using `sudo`
-
 # TODO Make sure these are installed (some might be bundled with others)
 # - xelatex
 #   - https://tex.stackexchange.com/questions/179778/xelatex-under-ubuntu
@@ -13,14 +11,11 @@
 
 # TODO check this file for default programs: /etc/gnome/defaults.list
 
-# Exit if not running as root (if the Effective User ID is not 0)
-if [[ $EUID -ne 0 ]]; then
-  echo This file must be run using sudo. Exiting.
-  exit
+# Require this script to be run as root with $SUDO_USER defined
+if ! ([[ $(whoami) == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
+  >&2 echo 'This script must be run using "sudo". Exiting...'
+  exit 1
 fi
-
-# get user name
-thisuser=$(logname)
 
 
 # Determine whether this script is being run on a laptop
@@ -40,7 +35,7 @@ sed -i 's/false/true/g' /etc/apt/apt.conf.d/00recommends
 
 
 # Make terminal window opaque
-sudo -u $thisuser -- sed -i '/^BackgroundMode=/d' ~/.config/xfce4/terminal/terminalrc
+sudo -u $SUDO_USER -- sed -i '/^BackgroundMode=/d' ~/.config/xfce4/terminal/terminalrc
 # ^OR> Terminal: Edit > Preferences > "Appearance" tab
 # Background: select "None (use solid color)"
 
@@ -147,7 +142,7 @@ apt-get install --install-recommends ${toInstall[@]} # TODO is recommends needed
 # - pngout (optional)
 # TODO Add ~/pdfsizeopt to PATH
 # TODO Install pdftk and write a bash version of pdfcompress function
-sudo -u $thisuser -- mkdir ~/pdfsizeopt && cd $_ \
+sudo -u $SUDO_USER -- mkdir ~/pdfsizeopt && cd $_ \
   && curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
   && tar  xzvf pdfsizeopt.tar.gz && rm -f $_ \
   && curl -Lo pdfsizeopt \
@@ -160,24 +155,24 @@ sudo -u $thisuser -- mkdir ~/pdfsizeopt && cd $_ \
 
 
 # Install vim-plug
-sudo -u $thisuser -- curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+sudo -u $SUDO_USER -- curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
   && vim +PlugInstall +qall
 
 # Install nvm (Node Version Manager) -- https://github.com/creationix/nvm
-sudo -u $thisuser -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+sudo -u $SUDO_USER -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 # Set environment variables so we can use nvm without restarting the shell
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 # Install nodejs
-sudo -u $thisuser -- nvm install node
+sudo -u $SUDO_USER -- nvm install node
 
 # Set up file(s) for custom firejail permissions
 # They will persist when updating firejail
-sudo -u $thisuser -- mkdir ~/.config/firejail
-sudo -u $thisuser -- cp /etc/firejail/firefox.profile ~/.config/firejail
-sudo -u $thisuser -- cp /etc/firejail/chromium.profile ~/.config/firejail
-sudo -u $thisuser -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
+sudo -u $SUDO_USER -- mkdir ~/.config/firejail
+sudo -u $SUDO_USER -- cp /etc/firejail/firefox.profile ~/.config/firejail
+sudo -u $SUDO_USER -- cp /etc/firejail/chromium.profile ~/.config/firejail
+sudo -u $SUDO_USER -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
 
 
 # Always run in the firejail sandbox
