@@ -28,7 +28,7 @@ thisuser=$(logname)
 echo -n "This script is being run on a "
 
 case $(ls -d /home/*/ | head -n 1 | sed 's,/^home/,,' | sed 's,/$,,') in
-  Laptop|Notebook|Portable|Sub Notebook)
+  'Laptop'|'Notebook'|'Portable'|'Sub Notebook')
     islaptop='true'
     echo laptop.
     ;;
@@ -61,8 +61,8 @@ sed -i 's/^\(XKBOPTIONS="\)[^"]*"$/\1compose:menu"/' /etc/default/keyboard
 # Enable battery icon in system tray for laptops
 # (test for/ask if computer is a laptop)
 if [ "$islaptop" = "true" ]; then
-  # TODO implement this
   # show battery icon in system tray
+  : # TODO implement this
 fi
 # Power Manager: select "Show system tray icon"
 
