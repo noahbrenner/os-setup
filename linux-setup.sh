@@ -165,11 +165,6 @@ sudo -u $SUDO_USER -- mkdir ~/pdfsizeopt && cd $_ \
 # Install sc-im
 
 
-# Install vim-plug
-sudo -u $SUDO_USER -- curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
-  && vim +PlugInstall +qall
-
 # Install nvm (Node Version Manager) -- https://github.com/creationix/nvm
 sudo -u $SUDO_USER -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 # Set environment variables so we can use nvm without restarting the shell
