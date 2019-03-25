@@ -27,6 +27,17 @@ case $(dmidecode --string chassis-type) in
 esac
 
 
+# === Fix home directory permissions === #
+
+# Set home directories to be readable only by their owners
+chmod 700 /home/*
+
+# Configure `adduser` to do the same for users created later
+file='/etc/adduser.conf'
+[[ -f "$file" ]] && sed -i 's/^DIR_MODE=[0-7]*/DIR_MODE=0700/' "$file"
+unset -v file
+
+
 # Always install recommended package dependencies
 sed -i 's/\(Install-Recommends "\)[0-9]"/\11"/' /root/.synaptic/synaptic.conf
 # ^OR> Synaptic Package Manager: Settings > Preferences > "General" tab
