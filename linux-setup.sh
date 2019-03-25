@@ -21,9 +21,9 @@ fi
 # Determine whether this script is being run on a laptop
 case $(dmidecode --string chassis-type) in
   'Laptop'|'Notebook'|'Portable'|'Sub Notebook')
-    isLaptop='true' ;;
+    is_laptop='true' ;;
   *)
-    isLaptop='false' ;;
+    is_laptop='false' ;;
 esac
 
 
@@ -58,7 +58,7 @@ sed -i 's/^\(XKBOPTIONS="\)[^"]*"$/\1compose:menu"/' /etc/default/keyboard
 
 
 # Enable battery icon in system tray for laptops
-if [[ "$isLaptop" == 'true' ]]; then
+if [[ "$is_laptop" == 'true' ]]; then
   : # TODO implement this
 fi
 
@@ -80,16 +80,16 @@ ufw enable
 # check: `sudo ufw status verbose`
 
 # Remove programs
-toRemove=(
+to_remove=(
   gnome-orca # screen reader
   mono-runtime-common # .NET implementation
 )
 
-apt-get purge --autoremove ${toRemove[@]}
+apt-get purge --autoremove ${to_remove[@]}
 
 
 # Install programs
-toInstall=(
+to_install=(
   # at # Schedule a one-time command to run later
   curl
   encfs # encrypted virtual filesystem
@@ -126,18 +126,18 @@ toInstall=(
 # - ytree - A file manager for terminals
 
 # TODO decide between these media players
-# toInstall+=(rhythmbox) # now the default on Linux Mint, has iPod compatibility
-# toInstall+=(gmusicbrowser) # recommended by users, incl. users of MediaMonkey
+# to_install+=(rhythmbox) # now the default on Linux Mint, has iPod compatibility
+# to_install+=(gmusicbrowser) # recommended by users, incl. users of MediaMonkey
 
 # if 32 bit processor
-toInstall+=(chromium-browser)
+to_install+=(chromium-browser)
 # else get chrome somehow
 # end if
 
 # if Linux Mint
-toInstall+=(mint-meta-codecs)
+to_install+=(mint-meta-codecs)
 
-apt-get install --install-recommends ${toInstall[@]} # TODO is recommends needed?
+apt-get install --install-recommends ${to_install[@]} # TODO is recommends needed?
 
 
 # Install pdfsizeopt - https://github.com/pts/pdfsizeopt
