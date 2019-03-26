@@ -51,10 +51,19 @@ sudo -u $SUDO_USER -- sed -i '/^BackgroundMode=/d' ~/.config/xfce4/terminal/term
 # Background: select "None (use solid color)"
 
 
-# Set ComposeKey to Menu key
-sed -i 's/^\(XKBOPTIONS="\)[^"]*"$/\1compose:menu"/' /etc/default/keyboard
-# Info on possible settings: `man keyboard` & /usr/share/X11/xkb/rules/xorg.lst
-# All possible characters: /usr/share/X11/locale/en_US.UTF-8/Compose
+# === Set ComposeKey to Menu key === #
+
+# Info on possible settings:
+# - `man keyboard`
+# - /usr/share/X11/xkb/rules/xorg.lst
+
+# All possible composed characters:
+# - /usr/share/X11/locale/en_US.UTF-8/Compose
+
+# NOTE: This change won't take effect until the next login
+file='/etc/default/keyboard'
+[[ -f "$file" ]] && sed -i 's/^XKBOPTIONS=.*$/XKBOPTIONS="compose:menu"/' "$file"
+unset -v file
 
 
 # Enable battery icon in system tray for laptops
