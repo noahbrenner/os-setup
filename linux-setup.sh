@@ -7,9 +7,16 @@ if ! ([[ $(whoami) == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
 fi
 
 
-# Determine whether this script is being run on a laptop
+# === Platform detection === #
+
+# Boolean logic: https://stackoverflow.com/questions/2953646/how-to-declare-and-use-boolean-variables-in-shell-script
+
+# Is this a 32-bit OS?
+# - https://www.cyberciti.biz/faq/linux-how-to-find-if-processor-is-64-bit-or-not/
+[[ $(getconf LONG_BIT) == '32' ]] && is_32_bit=1
+
+# Is this a laptop?
 # - https://unix.stackexchange.com/questions/111508/bash-test-if-word-is-in-set
-# - https://stackoverflow.com/questions/2953646/how-to-declare-and-use-boolean-variables-in-shell-script
 chassis=$(dmidecode --string chassis-type)
 [[ $chassis =~ ^(Laptop|Notebook|Portable|Sub Notebook) ]] && is_laptop=1
 unset -v chassis
@@ -120,10 +127,11 @@ install_main=(
   lacheck
 )
 
-# if 32 bit processor
-install_main+=(chromium-browser)
-# else get chrome somehow
-# end if
+if (( $is_32_bit )); then
+  install_main+=(chromium-browser)
+else
+  : # TODO Install Chrome somehow
+fi
 
 # if Linux Mint
 install_main+=(mint-meta-codecs)
