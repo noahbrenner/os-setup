@@ -38,13 +38,6 @@ file='/etc/adduser.conf'
 unset -v file
 
 
-# Always install recommended package dependencies
-sed -i 's/\(Install-Recommends "\)[0-9]"/\11"/' /root/.synaptic/synaptic.conf
-# ^OR> Synaptic Package Manager: Settings > Preferences > "General" tab
-# "Marking Changes" section: select "Consider recommended packages as dependencies"
-sed -i 's/false/true/g' /etc/apt/apt.conf.d/00recommends
-
-
 # Make terminal window opaque
 sudo -u $SUDO_USER -- sed -i '/^BackgroundMode=/d' ~/.config/xfce4/terminal/terminalrc
 # ^OR> Terminal: Edit > Preferences > "Appearance" tab
