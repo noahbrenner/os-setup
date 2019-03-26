@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# TODO Make sure these are installed (some might be bundled with others)
-# - xelatex
-#   - https://tex.stackexchange.com/questions/179778/xelatex-under-ubuntu
-#   - XeLatex is a part of `texlive-xetex` package.
-#     To install, run the following command: `sudo apt-get install texlive-xetex`
-# - chktex
-# - lacheck
-# - ? other linters that `ale` (vim plugin) can use
-
-# TODO check this file for default programs: /etc/gnome/defaults.list
-
 # Require this script to be run as root with $SUDO_USER defined
 if ! ([[ $(whoami) == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
   >&2 echo 'This script must be run using "sudo". Exiting...'
@@ -81,65 +70,120 @@ fi
 ufw enable
 # check: `sudo ufw status verbose`
 
-# Remove programs
-to_remove=(
-  gnome-orca # screen reader
-  mono-runtime-common # .NET implementation
-)
+# === Install/Uninstall apt packages === #
 
-apt-get purge --autoremove ${to_remove[@]}
+# Any indented package is recommended by the unindented package above it
 
-
-# Install programs
-to_install=(
-  # at # Schedule a one-time command to run later
+# Packages I'd probably want to install when trying out a live USB
+install_minimum=(
   curl
-  encfs # encrypted virtual filesystem
-  ffmpeg # transcode audio and video files
-  firejail # sandbox, particularly useful for firefox
-  flac # TODO decide on this
   git
-  libhal1-flash # enables playing DRM flash content in Firefox
-  libimage-exiftool-perl # provides exiftool
-  build-essential # C libraries, needed to compile sc-im
-  libncurses5-dev # needed to compile (and run?) sc-im
-  libncursesw5-dev # needed to compile (and run?) sc-im
-  # linkchecker # TODO decide on this (check websites for broken links)
-  nmap # provides ncat for testing HTTP requests and responses
-  pdftk
-  # python-pip # For Python 2
-  python3-pip python3-venv # Both needed for pipenv
-  python3-tk # tkinter for Python3
-  sc # "spreadsheet calculator" (or do I want to install sc-im [manually]?)
-  traceroute # trace the path of ip packets
-  tree # display directories in a tree structure
-  vim-gtk3 # Also uses Python 3 rather than 2
-  vlc # vlc media player
-  # wine # TODO decide on this
-  zopfli # gzip compressor, but accomplishes better compression than `gzip`
+    gitk
+  ntp
+  vim-gtk3
+    fonts-dejavu
+  xcape # TODO: Maybe remove once I have a better setup for keyboard shortcuts
+  xfpanel-switch
 )
-# TODO Other programs I'll likely add:
-# - idle
-# - idle3
 
-# TODO Programs to check out
-# - cherrytree - hierarchical note taking application
-# - treesheets - Data organizer that covers spreadsheets, mind mappers, and small databases
-# - ytree - A file manager for terminals
+# Packages to install on my working computer, in addition to $install_minimum
+install_main=(
+  build-essential
+  encfs # Encrypted virtual filesystem
+  ffmpeg
+  flac # TODO Was this the best one for compression?
+  gimp
+  inkscape
+    libimage-magick-perl
+    python-lxml
+    python-numpy
+    python-scour
+  libimage-exiftool-perl # Provides exiftool
+  lilypond
+  nmap # Provides ncat for testing HTTP requests and responses
+  # pdftk # Used to be in apt, but not currently -- probably install as snap
+  python3
+    idle # Or could be idle3, but both are for python3 at this point
+    python3-pip
+    python3-tk
+    python3-venv # Also required for pipenv
+  texlive-xetex
+    lmodern
+  traceroute
+  tree
+  vlc
+    libdvd-pkg # This worked to play DVDs in VLC, but not in Parole
+  zopfli
 
-# TODO decide between these media players
-# to_install+=(rhythmbox) # now the default on Linux Mint, has iPod compatibility
-# to_install+=(gmusicbrowser) # recommended by users, incl. users of MediaMonkey
+  # Syntax checkers used in vim via ALE
+  # TODO Check for more to add to this section
+  chktex
+  lacheck
+)
 
 # if 32 bit processor
-to_install+=(chromium-browser)
+install_main+=(chromium-browser)
 # else get chrome somehow
 # end if
 
 # if Linux Mint
-to_install+=(mint-meta-codecs)
+install_main+=(mint-meta-codecs)
 
-apt-get install --install-recommends ${to_install[@]} # TODO is recommends needed?
+# Packages I haven't yet decided on
+install_maybe=(
+  at # Schedule a one-time command to run later
+  firejail # Sandbox, particularly useful for firefox
+  libavcodec-extra # From ubuntu-restricted-extras; Still no DVD playback, reboot?
+  libncurses5-dev # Needed to compile (and run?) sc-im
+  libncursesw5-dev # Needed to compile (and run?) sc-im
+  libhal1-flash # Only needed for Firefox to play DRM flash content
+  linkchecker # Check websites for broken links
+  python
+    idle-python2.7
+    python-pip
+    python-tk
+    python-venv
+  sc # TODO: This or sc-im? sc-im needs build-essential, libncurses{w,}5-dev
+  shellcheck # Syntax checker for shell scripts. Used by ALE
+  wine
+  ytree # A file manager for terminals
+
+  # Organization
+  cherrytree # Hierarchical note-taking application
+  treesheets # Data organizer; covers spreadsheets, mind mappers, & small databases
+
+  # Media players
+  gmusicbrowser # Recommended by users, including users of MediaMonkey
+  rhythmox # The default on Linux Mint; iPod compatibility, iTunes-inspired
+)
+
+# Full list of packages to install
+to_install=(
+  "${install_minimum[@]}"
+  "${install_main[@]}"
+  # "${install_maybe[@]}"
+)
+
+# Packages I don't want which may have been installed by default
+# NOTE: Default programs are listed here: /etc/gnome/defaults.list
+to_uninstall=(
+  vim-tiny
+
+  # Linux Mint default packages
+  gnome-orca # Screen reader
+  mono-runtime-common # .NET implementation
+)
+
+apt-get update
+apt-get --yes upgrade
+# This could use --install-recommends if I don't want to curate Recommends
+apt-get install --yes ${to_install[@]}
+apt-get purge --yes --autoremove ${to_uninstall[@]}
+unset -v install_minimum install_main install_maybe to_install to_uninstall
+
+# This is needed so that libdvd-pkg can install updates from source
+# The execution of this command requires human interaction
+dpkg-reconfigure libdvd-pkg
 
 
 # Install pdfsizeopt - https://github.com/pts/pdfsizeopt
