@@ -8,12 +8,11 @@ fi
 
 
 # Determine whether this script is being run on a laptop
-case $(dmidecode --string chassis-type) in
-  'Laptop'|'Notebook'|'Portable'|'Sub Notebook')
-    is_laptop='true' ;;
-  *)
-    is_laptop='false' ;;
-esac
+# - https://unix.stackexchange.com/questions/111508/bash-test-if-word-is-in-set
+# - https://stackoverflow.com/questions/2953646/how-to-declare-and-use-boolean-variables-in-shell-script
+chassis=$(dmidecode --string chassis-type)
+[[ $chassis =~ ^(Laptop|Notebook|Portable|Sub Notebook) ]] && is_laptop=1
+unset -v chassis
 
 
 # === Fix home directory permissions === #
@@ -49,7 +48,7 @@ unset -v file
 
 
 # Enable battery icon in system tray for laptops
-if [[ "$is_laptop" == 'true' ]]; then
+if (( $is_laptop )); then
   : # TODO implement this
 fi
 
