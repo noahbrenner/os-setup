@@ -56,13 +56,15 @@ file='/etc/default/keyboard'
 unset -v file
 
 
-# Enable battery icon in system tray for laptops
+# === Enable battery icon in system tray for laptops === #
+
 if (( $is_laptop )); then
   : # TODO implement this
 fi
 
 
-# Decrease swap use, improve RAM use
+# === Decrease swap use, improve RAM use === #
+
 # (untested, but something like:)
 # (test for memory < 4 GB)
 # echo "# Decrease swap usage to a more reasonable level" >> /etc/sysctl.conf
@@ -70,13 +72,15 @@ fi
 # (test for memory > 1 GB)
 # echo "# Improve cache management" >> /etc/sysctl.conf
 # echo "vm.vfs_cache_pressure=50" >> /etc/sysctl.conf
-# reboot the computer
-# check: `cat /proc/sys/vm/swappiness` should output `10`
+# Reboot the computer
+# Check: `cat /proc/sys/vm/swappiness` should output `10`
 
 
-# Enable Uncomplicated Firewall
+# === Enable Uncomplicated Firewall === #
+
 ufw enable
-# check: `sudo ufw status verbose`
+# Check: `sudo ufw status verbose`
+
 
 # === Install/Uninstall apt packages === #
 
@@ -195,7 +199,9 @@ unset -v install_minimum install_main install_maybe to_install to_uninstall
 dpkg-reconfigure libdvd-pkg
 
 
-# Install pdfsizeopt - https://github.com/pts/pdfsizeopt
+# === Install pdfsizeopt === #
+
+# Repo: https://github.com/pts/pdfsizeopt
 # NOTE Check for new versions, since the version is hard-coded in the URL
 # TODO Do this in a subshell so that the working directory doesn't change
 # TODO Try installing dependencies separately, rather than downloading them from the repo
@@ -220,6 +226,8 @@ sudo -u $SUDO_USER -- mkdir ~/pdfsizeopt && cd $_ \
 # Install sc-im
 
 
+# === Install Node.js via nvm === #
+
 # Install nvm (Node Version Manager) -- https://github.com/creationix/nvm
 sudo -u $SUDO_USER -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 # Set environment variables so we can use nvm without restarting the shell
@@ -228,6 +236,9 @@ export NVM_DIR="$HOME/.nvm"
 # Install nodejs
 sudo -u $SUDO_USER -- nvm install node
 
+
+# === Configure firejail === #
+
 # Set up file(s) for custom firejail permissions
 # They will persist when updating firejail
 sudo -u $SUDO_USER -- mkdir ~/.config/firejail
@@ -235,26 +246,27 @@ sudo -u $SUDO_USER -- cp /etc/firejail/firefox.profile ~/.config/firejail
 sudo -u $SUDO_USER -- cp /etc/firejail/chromium.profile ~/.config/firejail
 sudo -u $SUDO_USER -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
 
-
 # Always run in the firejail sandbox
 ## cp /usr/share/applications/firefox.desktop ~/.local/share/applications
 ## cp /usr/share/applications/chromium-browser.desktop ~/.local/share/applications
 ## sed -i 's/Exec=firefox/Exec=firejail firefox/g' ~/.local/share/applications/firefox.desktop
 ## sed -i 's/Exec=chromium-browser/Exec=firejail chromium-browser/g' ~/.local/share/applications/chromium-browser.desktop
-# undo: rm ~/.local/share/applications/firefox.desktop
-# undo: rm ~/.local/share/applications/chromium-browser.desktop
+# Undo: rm ~/.local/share/applications/firefox.desktop
+# Undo: rm ~/.local/share/applications/chromium-browser.desktop
 
 # Run browsers in the sandbox when started from taskbar launchers
-# right-click browser icon > Properties > edit (pencil icon)
-# Command: prepend "firejail "
+# Right-click browser icon > Properties > edit (pencil icon)
+# Command: Prepend with "firejail "
 
 
-# Disable hibernation
+# === Disable hibernation === #
+
 mv /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla /
-# undo: just move it back
+# Undo: Just move it back
 
 
-# Change settings for clock
+# === Change settings for clock === #
+
 # ~/.config/xfce4/panel/datetime-5.rc
 
 
