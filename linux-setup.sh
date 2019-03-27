@@ -33,10 +33,12 @@ file='/etc/adduser.conf'
 unset -v file
 
 
-# Make terminal window opaque
-sudo -u $SUDO_USER -- sed -i '/^BackgroundMode=/d' ~/.config/xfce4/terminal/terminalrc
-# ^OR> Terminal: Edit > Preferences > "Appearance" tab
-# Background: select "None (use solid color)"
+# === Make terminal window opaque === #
+
+# If the config file has a "BackgroundMode" line, delete it
+file="/home/$SUDO_USER/.config/xfce4/terminal/terminalrc"
+[[ -f "$file" ]] && sudo -u $SUDO_USER -- sed -i '/^BackgroundMode=/d' "$file"
+unset -v file
 
 
 # === Set ComposeKey to Menu key === #
