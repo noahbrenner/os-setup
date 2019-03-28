@@ -228,13 +228,29 @@ sudo -u $SUDO_USER -- mkdir ~/pdfsizeopt && cd $_ \
 
 # === Install Node.js via nvm === #
 
-# Install nvm (Node Version Manager) -- https://github.com/creationix/nvm
-sudo -u $SUDO_USER -- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-# Set environment variables so we can use nvm without restarting the shell
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-# Install nodejs
-sudo -u $SUDO_USER -- nvm install node
+# nvm (Node Version Manager): https://github.com/creationix/nvm
+
+# Currently, we have to specify a specific version of nvm to install. The nvm
+# developer does intend to eventually implement the ability to upgrade itself,
+# which will make this process cleaner. Until then, we should check for new
+# versions before installing.
+
+nvm_ver='v0.34.0' # TODO Update this as needed (until `upgrade` is implemented)
+src_url="https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh"
+
+# Install nvm
+curl -o- "$src_url" | sudo -u $SUDO_USER -- bash
+
+# Load nvm and install Node.js as $SUDO_USER
+su $SUDO_USER --login <<'EOF'
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  nvm install node
+EOF
+
+# TODO Install global npm packages
+
+unset -v nvm_ver src_url
 
 
 # === Configure firejail === #
