@@ -21,6 +21,9 @@ chassis=$(dmidecode --string chassis-type)
 [[ $chassis =~ ^(Laptop|Notebook|Portable|Sub Notebook) ]] && is_laptop=1
 unset -v chassis
 
+# Get the OS distro name
+# Likely values: 'Ubuntu', 'LinuxMint'
+distro=$(lsb_release --id --short)
 
 # === Fix home directory permissions === #
 
@@ -139,8 +142,9 @@ else
   : # TODO Install Chrome somehow
 fi
 
-# if Linux Mint
-install_main+=(mint-meta-codecs)
+if [[ "$distro" == 'LinuxMint' ]]; then
+  install_main+=(mint-meta-codecs)
+fi
 
 # Packages I haven't yet decided on
 install_maybe=(
