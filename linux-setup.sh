@@ -79,6 +79,16 @@ fi
 # Check: `cat /proc/sys/vm/swappiness` should output `10`
 
 
+# === Increase the max number of files which can be watched === #
+
+# https://stackoverflow.com/a/24994331
+# https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers
+
+# The default on my computer when writing this was 8192
+echo fs.inotify.max_user_watches=65536 >> /etc/sysctl.conf
+sysctl --system
+
+
 # === Enable Uncomplicated Firewall === #
 
 ufw enable
