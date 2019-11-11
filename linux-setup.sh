@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Require this script to be run as root with $SUDO_USER defined
-if ! ([[ $(whoami) == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
+if ! ([[ "$(whoami)" == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
   >&2 echo 'This script must be run using "sudo". Exiting...'
   exit 1
 fi
@@ -13,7 +13,7 @@ fi
 
 # Is this a 32-bit OS?
 # - https://www.cyberciti.biz/faq/linux-how-to-find-if-processor-is-64-bit-or-not/
-[[ $(getconf LONG_BIT) == '32' ]] && is_32_bit=1
+[[ "$(getconf LONG_BIT)" == '32' ]] && is_32_bit=1
 
 # Is this a laptop?
 # - https://unix.stackexchange.com/questions/111508/bash-test-if-word-is-in-set
@@ -253,10 +253,10 @@ nvm_ver='v0.34.0' # TODO Update this as needed (until `upgrade` is implemented)
 src_url="https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh"
 
 # Install nvm
-curl -o- "$src_url" | sudo -u $SUDO_USER -- bash
+curl -o- "$src_url" | sudo -u "$SUDO_USER" -- bash
 
 # Load nvm and install Node.js as $SUDO_USER
-su $SUDO_USER --login <<'EOF'
+su "$SUDO_USER" --login <<'EOF'
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   nvm install node
@@ -271,10 +271,11 @@ unset -v nvm_ver src_url
 
 # Set up file(s) for custom firejail permissions
 # They will persist when updating firejail
-sudo -u $SUDO_USER -- mkdir ~/.config/firejail
-sudo -u $SUDO_USER -- cp /etc/firejail/firefox.profile ~/.config/firejail
-sudo -u $SUDO_USER -- cp /etc/firejail/chromium.profile ~/.config/firejail
-sudo -u $SUDO_USER -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
+# TODO FIXME Run these in a subshell or replace "~" with "/home/$SUDO_USER"
+sudo -u "$SUDO_USER" -- mkdir ~/.config/firejail
+sudo -u "$SUDO_USER" -- cp /etc/firejail/firefox.profile ~/.config/firejail
+sudo -u "$SUDO_USER" -- cp /etc/firejail/chromium.profile ~/.config/firejail
+sudo -u "$SUDO_USER" -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
 
 # Always run in the firejail sandbox
 ## cp /usr/share/applications/firefox.desktop ~/.local/share/applications
