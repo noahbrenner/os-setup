@@ -204,8 +204,8 @@ to_uninstall=(
 apt-get update
 apt-get --yes upgrade
 # This could use --install-recommends if I don't want to curate Recommends
-apt-get install --yes ${to_install[@]}
-apt-get purge --yes --autoremove ${to_uninstall[@]}
+apt-get install --yes "${to_install[@]}"
+apt-get purge --yes --autoremove "${to_uninstall[@]}"
 unset -v install_minimum install_main install_maybe to_install to_uninstall
 
 # This is needed so that libdvd-pkg can install updates from source
