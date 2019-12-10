@@ -113,10 +113,13 @@ install_minimum=(
 
 # Packages to install on my working computer, in addition to $install_minimum
 install_main=(
+  audacity
   build-essential
+  cmake
   encfs # Encrypted virtual filesystem
   ffmpeg
-  flac # TODO Was this the best one for compression?
+  flac
+  flake
   gimp
   inkscape
     libimage-magick-perl
@@ -124,6 +127,8 @@ install_main=(
     python-numpy
     python-scour
   libimage-exiftool-perl # Provides exiftool
+  # libreoffice # TODO Do I want everything or do i want -core/-common instead?
+    libreoffice-script-provider-python
   lilypond
   nmap # Provides ncat for testing HTTP requests and responses
   # pdftk # Used to be in apt, but not currently -- probably install as snap
@@ -132,18 +137,30 @@ install_main=(
     python3-pip
     python3-tk
     python3-venv # Also required for pipenv
+  snapd
   texlive-xetex
     lmodern
+    texlive-fonts-extra
   traceroute
   tree
   vlc
     libdvd-pkg # This worked to play DVDs in VLC, but not in Parole
+    vlc-plugin-fluidsynth # Enables VLC to play MIDI files
+  xournal # PDF editor - TODO Do I want xournal++ instead (PPA or snap)? Or okular?
   zopfli
 
   # Syntax checkers used in vim via ALE
   # TODO Check for more to add to this section
   chktex
   lacheck
+
+  # Build dependencies for libwebp
+  freeglut3-dev # OpenGL lib
+  libgif-dev
+  libjpeg-dev
+  libpng-dev
+  libtiff-dev
+  mesa-common-dev # OpenGL lib
 )
 
 if (( $is_32_bit )); then
