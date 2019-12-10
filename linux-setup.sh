@@ -378,6 +378,25 @@ sudo -u "$SUDO_USER" -- git config --global core.pager 'less -+F -+X'
 unset -v name email
 
 
+# === Install webp === #
+
+webp_version_tag='v1.0.3' # TODO Update this as needed
+
+# TODO Make sure all these commands are actually run as SUDO_USER
+sudo -u "$SUDO_USER" -- mkdir dev && cd ~/dev
+sudo -u "$SUDO_USER" -- git clone https://chromium.googlesource.com/webm/libwebp \
+  && cd libwebp
+sudo -u "$SUDO_USER" -- git checkout -b "$webp_version_tag" "$webp_version_tag"
+sudo -u "$SUDO_USER" -- mkdir build && cd build
+sudo -u "$SUDO_USER" -- cmake ../
+sudo -u "$SUDO_USER" -- make
+
+# TODO Should I put this in the last command with && and sudo?
+make install
+
+unset -v webp_version_tag
+
+
 # === Configure firejail === #
 
 # Set up file(s) for custom firejail permissions
