@@ -241,6 +241,13 @@ unset -v install_minimum install_main install_maybe to_install to_uninstall snap
 dpkg-reconfigure libdvd-pkg
 
 
+# === Install OBS === #
+
+add-apt-repository ppa:obsproject/obs-studio
+apt-get-update # Not necessary? Newer Ubuntu versions update when adding a ppa
+apt-get install obs-studio
+
+
 # === Install pdfsizeopt === #
 
 # Repo: https://github.com/pts/pdfsizeopt
