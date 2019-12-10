@@ -286,13 +286,31 @@ unset -v pipx_packages package
 # - jbig (optional)
 # - pngout (optional)
 # TODO Add ~/pdfsizeopt to PATH
+# TODO Look into docker version (not updated frequently, but maybe easier setup, isolated)
 # TODO Install pdftk and write a bash version of pdfcompress function
-sudo -u $SUDO_USER -- mkdir ~/pdfsizeopt && cd $_ \
-  && curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
-  && tar  xzvf pdfsizeopt.tar.gz && rm -f $_ \
+# TODO Also see qpdf (haven't tried it yet)
+pso_dir="/home/$SUDO_USER/src-bin/pdfsizeopt/"
+sudo -u "$SUDO_USER" -- mkdir -p ${pso_dir} && cd ${pso_dir} \
+  && curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_linux-v3.tar.gz \
+  && curl -Lo pdfsizeopt-extra.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
+  && tar xzvf pdfsizeopt.tar.gz && rm -f $_ \
+  && tar xzvf pdfsizeopt-extra.tar.gz && rm -f $_ \
   && curl -Lo pdfsizeopt \
   https://raw.githubusercontent.com/pts/pdfsizeopt/master/pdfsizeopt.single \
   && chmod +x pdfsizeopt
+
+# TODO implement this:
+# 1. Create a file in the same directory named pdfsizeopt-all with the following content
+# #!/bin/bash
+#
+# ~/src-bin/pdfsizeopt/pdfsizeopt \
+#   --use-image-optimizer=sam2p,jbig2,pngout,zopflipng,optipng,advpng,ECT \
+#   "$@" # Or does this work?: ${@} Or maybe it would have to be "${@}"
+#
+# 2. make it executable and available on the PATH
+# chmod +x pdfsizeopt-all
+# mkdir ~/bin/
+# ln -s $(pwd)/pdfsizeopt-all ~/bin/pdfsizeopt
 
 
 # TODO
