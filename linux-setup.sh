@@ -344,6 +344,40 @@ EOF
 unset -v nvm_ver src_url
 
 
+# === Configure git === #
+
+read -p '(for git config) Enter full name: ' name
+read -p '(for git config) Enter email: ' email
+
+sudo -u "$SUDO_USER" -- git config --global user.name "$name"
+sudo -u "$SUDO_USER" -- git config --global user.email "$email"
+sudo -u "$SUDO_USER" -- git config --global core.editor 'vim'
+# TODO: Revisit diff.tool config - probably gvimdiff, gvimdiff2, or gvimdiff3
+sudo -u "$SUDO_USER" -- git config --global diff.tool 'gvimdiff3'
+# sudo -u "$SUDO_USER" -- git config --global core.excludesfile '~/.gitignore-global'
+# sudo -u "$SUDO_USER" -- touch "/home/$SUDO_USER/.gitignore-global"
+sudo -u "$SUDO_USER" -- git config --global init.templatedir '~/.git-templates'
+sudo -u "$SUDO_USER" -- git config --global merge.conflictstyle 'diff3'
+sudo -u "$SUDO_USER" -- git config --global push.default 'nothing'
+
+# Disable the pager for common subcommands by default
+#
+# This addresses the issue where the paged output fails to clear from the
+# terminal on exit. The pager can be used manually by passing -p to git:
+#     $ git -p diff
+#
+# Another option if I *do* want the auto-paging, but only for long output:
+# https://unix.stackexchange.com/a/183676
+sudo -u "$SUDO_USER" -- git config --global pager.diff 'false'
+sudo -u "$SUDO_USER" -- git config --global pager.log 'false'
+sudo -u "$SUDO_USER" -- git config --global pager.status 'false'
+
+# Never exit the pager automatically, and reset the screen when it *is* exited
+sudo -u "$SUDO_USER" -- git config --global core.pager 'less -+F -+X'
+
+unset -v name email
+
+
 # === Configure firejail === #
 
 # Set up file(s) for custom firejail permissions
