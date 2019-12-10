@@ -248,6 +248,30 @@ apt-get-update # Not necessary? Newer Ubuntu versions update when adding a ppa
 apt-get install obs-studio
 
 
+# === Install Python packages === #
+
+sudo -u "$SUDO_USER" -- pip3 install --user pipx # https://github.com/pipxproject/pipx
+
+pipx_packages=(
+  awscli
+  pipenv
+)
+
+for package in "${pipx_packages[@]}"; do
+  sudo -u "$SUDO_USER" -- pipx install "$package"
+done
+
+unset -v pipx_packages package
+
+
+# === Configure aws === #
+
+# TODO Add the following to .bashrc
+# if [ -x ~/.local/bin/aws_completer ]; then
+#   complete -C ~/.local/bin/aws_completer aws
+# fi
+
+
 # === Install pdfsizeopt === #
 
 # Repo: https://github.com/pts/pdfsizeopt
