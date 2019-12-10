@@ -2,8 +2,8 @@
 
 # Require this script to be run as root with $SUDO_USER defined
 if ! ([[ "$(whoami)" == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
-  >&2 echo 'This script must be run using "sudo". Exiting...'
-  exit 1
+	>&2 echo 'This script must be run using "sudo". Exiting...'
+	exit 1
 fi
 
 
@@ -62,7 +62,7 @@ unset -v file
 # === Enable battery icon in system tray for laptops === #
 
 if (( $is_laptop )); then
-  : # TODO implement this
+	: # TODO implement this
 fi
 
 
@@ -101,130 +101,130 @@ ufw enable
 
 # Packages I'd probably want to install when trying out a live USB
 install_minimum=(
-  curl
-  git
-    gitk
-  ntp
-  vim-gtk3
-    fonts-dejavu
-  xcape # TODO: Maybe remove once I have a better setup for keyboard shortcuts
-  xfpanel-switch
+	curl
+	git
+		gitk
+	ntp
+	vim-gtk3
+		fonts-dejavu
+	xcape # TODO: Maybe remove once I have a better setup for keyboard shortcuts
+	xfpanel-switch
 )
 
 # Packages to install on my working computer, in addition to $install_minimum
 install_main=(
-  audacity
-  build-essential
-  cmake
-  encfs # Encrypted virtual filesystem
-  ffmpeg
-  flac
-  flake
-  gimp
-  inkscape
-    libimage-magick-perl
-    python-lxml
-    python-numpy
-    python-scour
-  libimage-exiftool-perl # Provides exiftool
-  # libreoffice # TODO Do I want everything or do i want -core/-common instead?
-    libreoffice-script-provider-python
-  lilypond
-  nmap # Provides ncat for testing HTTP requests and responses
-  # pdftk # Used to be in apt, but not currently -- probably install as snap
-  python3
-    idle # Or could be idle3, but both are for python3 at this point
-    python3-pip
-    python3-tk
-    python3-venv # Also required for pipenv
-  snapd
-  texlive-xetex
-    lmodern
-    texlive-fonts-extra
-  traceroute
-  tree
-  vlc
-    libdvd-pkg # This worked to play DVDs in VLC, but not in Parole
-    vlc-plugin-fluidsynth # Enables VLC to play MIDI files
-  xournal # PDF editor - TODO Do I want xournal++ instead (PPA or snap)? Or okular?
-  zopfli
+	audacity
+	build-essential
+	cmake
+	encfs # Encrypted virtual filesystem
+	ffmpeg
+	flac
+	flake
+	gimp
+	inkscape
+		libimage-magick-perl
+		python-lxml
+		python-numpy
+		python-scour
+	libimage-exiftool-perl # Provides exiftool
+	# libreoffice # TODO Do I want everything or do i want -core/-common instead?
+		libreoffice-script-provider-python
+	lilypond
+	nmap # Provides ncat for testing HTTP requests and responses
+	# pdftk # Used to be in apt, but not currently -- probably install as snap
+	python3
+		idle # Or could be idle3, but both are for python3 at this point
+		python3-pip
+		python3-tk
+		python3-venv # Also required for pipenv
+	snapd
+	texlive-xetex
+		lmodern
+		texlive-fonts-extra
+	traceroute
+	tree
+	vlc
+		libdvd-pkg # This worked to play DVDs in VLC, but not in Parole
+		vlc-plugin-fluidsynth # Enables VLC to play MIDI files
+	xournal # PDF editor - TODO Do I want xournal++ instead (PPA or snap)? Or okular?
+	zopfli
 
-  # Syntax checkers used in vim via ALE
-  # TODO Check for more to add to this section
-  chktex
-  lacheck
+	# Syntax checkers used in vim via ALE
+	# TODO Check for more to add to this section
+	chktex
+	lacheck
 
-  # Build dependencies for libwebp
-  freeglut3-dev # OpenGL lib
-  libgif-dev
-  libjpeg-dev
-  libpng-dev
-  libtiff-dev
-  mesa-common-dev # OpenGL lib
+	# Build dependencies for libwebp
+	freeglut3-dev # OpenGL lib
+	libgif-dev
+	libjpeg-dev
+	libpng-dev
+	libtiff-dev
+	mesa-common-dev # OpenGL lib
 )
 
 if (( $is_32_bit )); then
-  install_main+=(chromium-browser)
+	install_main+=(chromium-browser)
 else
-  : # TODO Install Chrome somehow
+	: # TODO Install Chrome somehow
 fi
 
 if [[ "$distro" == 'LinuxMint' ]]; then
-  install_main+=(mint-meta-codecs)
+	install_main+=(mint-meta-codecs)
 fi
 
 # Packages I haven't yet decided on
 install_maybe=(
-  at # Schedule a one-time command to run later
-  firejail # Sandbox, particularly useful for firefox
-  libavcodec-extra # From ubuntu-restricted-extras; Still no DVD playback, reboot?
-  libncurses5-dev # Needed to compile (and run?) sc-im
-  libncursesw5-dev # Needed to compile (and run?) sc-im
-  libhal1-flash # Only needed for Firefox to play DRM flash content
-  linkchecker # Check websites for broken links
-  python
-    idle-python2.7
-    python-pip
-    python-tk
-    python-venv
-  sc # TODO: This or sc-im? sc-im needs build-essential, libncurses{w,}5-dev
-  shellcheck # Syntax checker for shell scripts. Used by ALE
-  wine
-  ytree # A file manager for terminals
+	at # Schedule a one-time command to run later
+	firejail # Sandbox, particularly useful for firefox
+	libavcodec-extra # From ubuntu-restricted-extras; Still no DVD playback, reboot?
+	libncurses5-dev # Needed to compile (and run?) sc-im
+	libncursesw5-dev # Needed to compile (and run?) sc-im
+	libhal1-flash # Only needed for Firefox to play DRM flash content
+	linkchecker # Check websites for broken links
+	python
+		idle-python2.7
+		python-pip
+		python-tk
+		python-venv
+	sc # TODO: This or sc-im? sc-im needs build-essential, libncurses{w,}5-dev
+	shellcheck # Syntax checker for shell scripts. Used by ALE
+	wine
+	ytree # A file manager for terminals
 
-  # Organization
-  cherrytree # Hierarchical note-taking application
-  treesheets # Data organizer; covers spreadsheets, mind mappers, & small databases
+	# Organization
+	cherrytree # Hierarchical note-taking application
+	treesheets # Data organizer; covers spreadsheets, mind mappers, & small databases
 
-  # Media players
-  gmusicbrowser # Recommended by users, including users of MediaMonkey
-  rhythmox # The default on Linux Mint; iPod compatibility, iTunes-inspired
+	# Media players
+	gmusicbrowser # Recommended by users, including users of MediaMonkey
+	rhythmox # The default on Linux Mint; iPod compatibility, iTunes-inspired
 )
 
 # Full list of packages to install
 to_install=(
-  "${install_minimum[@]}"
-  "${install_main[@]}"
-  # "${install_maybe[@]}"
+	"${install_minimum[@]}"
+	"${install_main[@]}"
+	# "${install_maybe[@]}"
 )
 
 # Packages I don't want which may have been installed by default
 # NOTE: Default programs are listed here: /etc/gnome/defaults.list
 to_uninstall=(
-  vim-tiny
+	vim-tiny
 
-  # Linux Mint default packages
-  gnome-orca # Screen reader
-  mono-runtime-common # .NET implementation
+	# Linux Mint default packages
+	gnome-orca # Screen reader
+	mono-runtime-common # .NET implementation
 )
 
 # http://www.linuxandubuntu.com/home/snap-vs-deb-package
 snap_packages=(
-  syncthing
+	syncthing
 )
 
 snap_packages_classic=(
-  slack
+	slack
 )
 
 apt-get update
@@ -253,12 +253,12 @@ apt-get install obs-studio
 sudo -u "$SUDO_USER" -- pip3 install --user pipx # https://github.com/pipxproject/pipx
 
 pipx_packages=(
-  awscli
-  pipenv
+	awscli
+	pipenv
 )
 
 for package in "${pipx_packages[@]}"; do
-  sudo -u "$SUDO_USER" -- pipx install "$package"
+	sudo -u "$SUDO_USER" -- pipx install "$package"
 done
 
 unset -v pipx_packages package
@@ -268,7 +268,7 @@ unset -v pipx_packages package
 
 # TODO Add the following to .bashrc
 # if [ -x ~/.local/bin/aws_completer ]; then
-#   complete -C ~/.local/bin/aws_completer aws
+#     complete -C ~/.local/bin/aws_completer aws
 # fi
 
 
@@ -291,13 +291,13 @@ unset -v pipx_packages package
 # TODO Also see qpdf (haven't tried it yet)
 pso_dir="/home/$SUDO_USER/src-bin/pdfsizeopt/"
 sudo -u "$SUDO_USER" -- mkdir -p ${pso_dir} && cd ${pso_dir} \
-  && curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_linux-v3.tar.gz \
-  && curl -Lo pdfsizeopt-extra.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
-  && tar xzvf pdfsizeopt.tar.gz && rm -f $_ \
-  && tar xzvf pdfsizeopt-extra.tar.gz && rm -f $_ \
-  && curl -Lo pdfsizeopt \
-  https://raw.githubusercontent.com/pts/pdfsizeopt/master/pdfsizeopt.single \
-  && chmod +x pdfsizeopt
+	&& curl -Lo pdfsizeopt.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_linux-v3.tar.gz \
+	&& curl -Lo pdfsizeopt-extra.tar.gz https://github.com/pts/pdfsizeopt/releases/download/2017-01-24/pdfsizeopt_libexec_extraimgopt_linux-v3.tar.gz \
+	&& tar xzvf pdfsizeopt.tar.gz && rm -f $_ \
+	&& tar xzvf pdfsizeopt-extra.tar.gz && rm -f $_ \
+	&& curl -Lo pdfsizeopt \
+	https://raw.githubusercontent.com/pts/pdfsizeopt/master/pdfsizeopt.single \
+	&& chmod +x pdfsizeopt
 
 # TODO implement this:
 # 1. Create a file in the same directory named pdfsizeopt-all with the following content
@@ -305,7 +305,7 @@ sudo -u "$SUDO_USER" -- mkdir -p ${pso_dir} && cd ${pso_dir} \
 #
 # ~/src-bin/pdfsizeopt/pdfsizeopt \
 #   --use-image-optimizer=sam2p,jbig2,pngout,zopflipng,optipng,advpng,ECT \
-#   "$@" # Or does this work?: ${@} Or maybe it would have to be "${@}"
+#   "$@"
 #
 # 2. make it executable and available on the PATH
 # chmod +x pdfsizeopt-all
@@ -334,9 +334,9 @@ curl -o- "$src_url" | sudo -u "$SUDO_USER" -- bash
 
 # Load nvm and install Node.js as $SUDO_USER
 su "$SUDO_USER" --login <<'EOF'
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  nvm install node
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	nvm install node
 EOF
 
 # TODO Install global npm packages
@@ -385,7 +385,7 @@ webp_version_tag='v1.0.3' # TODO Update this as needed
 # TODO Make sure all these commands are actually run as SUDO_USER
 sudo -u "$SUDO_USER" -- mkdir dev && cd ~/dev
 sudo -u "$SUDO_USER" -- git clone https://chromium.googlesource.com/webm/libwebp \
-  && cd libwebp
+	&& cd libwebp
 sudo -u "$SUDO_USER" -- git checkout -b "$webp_version_tag" "$webp_version_tag"
 sudo -u "$SUDO_USER" -- mkdir build && cd build
 sudo -u "$SUDO_USER" -- cmake ../
@@ -431,4 +431,4 @@ mv /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla /
 # ~/.config/xfce4/panel/datetime-5.rc
 
 
-# vim: shiftwidth=2
+# vim: tabstop=2 shiftwidth=0 noexpandtab
