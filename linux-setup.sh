@@ -687,4 +687,4 @@ main() {
 
 main "$@"
 
-# vim: tabstop=2 shiftwidth=0 noexpandtab
+# vim: tabstop=2 shiftwidth=0 noexpandtab foldmethod=marker
