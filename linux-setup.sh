@@ -89,12 +89,12 @@ install_apt_packages() {
 	apt-get --yes upgrade
 
 	# TODO Install each set conditionally
-	apt-get install --tes "${apt_install_minimum[@]}"
-	apt-get install --tes "${apt_install_main[@]}"
-	#apt-get install --tes "${apt_install_maybe[@]}"
+	apt-get install --yes "${apt_install_minimum[@]}"
+	apt-get install --yes "${apt_install_main[@]}"
+	#apt-get install --yes "${apt_install_maybe[@]}"
 
 	if (( "${#apt_install_custom[@]}" > 0 )); then
-		apt-get install --tes "${apt_install_custom[@]}"
+		apt-get install --yes "${apt_install_custom[@]}"
 	fi
 
 	apt-get purge --yes --autoremove "${apt_uninstall[@]}"
