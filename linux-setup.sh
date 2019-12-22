@@ -667,7 +667,7 @@ main() {
 
 	# Run pre-install functions
 	for function_name in "${run_before_apt_install[@]}"; do
-		command "$function_name"
+		"$function_name"
 	done
 
 	install_apt_packages
@@ -681,7 +681,7 @@ main() {
 
 	# Run post-install functions
 	for function_name in "${run_after_apt_install[@]}"; do
-		command "$function_name"
+		"$function_name"
 	done
 }
 
