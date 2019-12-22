@@ -364,10 +364,48 @@ install_pdfsizeopt() {
 ## sc-im ## {{{2
 
 install_scim() {
+	apt_install_custom+=(
+		bison
+		libncurses5-dev
+		libncursesw5-dev
+		libxml2-dev
+		libzip-dev
+		# We also need gcc, which is already installed via build-essential
+
+		# Optional dependencies
+		gnuplot-x11
+			# gnuplot-doc
+		xclip # Could instead be xsel, tmux, or other clipboard CLI tool
+	)
 	run_after_apt_install+=(__do_install_scim)
 
 	__do_install_scim() {
-		: # TODO
+		local parent_dir='src-bin'
+		local repo_dir='sc-im'
+		local repo_url='git@github.com:andmarti1424/sc-im.git'
+
+		if ! [[ -d "/home/$SUDO_USER/$parent_dir/$repo_dir/src" ]]; then
+			local vim_msg='TODO: Set default clipboard cmd to use xclip'
+			local vim_cmd="echohl Title | echomsg '$vim_msg' | echohl None"
+
+			su --login "$SUDO_USER" <<-EOF
+				mkdir -p ~/$parent_dir/
+				cd ~/"$parent_dir/"
+				git clone "$repo_url" "$repo_dir"
+				cd "$repo_dir/src"
+
+				# Open the Makefile for the user to edit
+				vim -c "$vim_cmd" ~/"$parent_dir/$repo_dir/src/Makefile" < /dev/tty
+
+				make CC=gcc YACC='bison -y' SED=sed
+				sudo make install
+			EOF
+
+			# TODO Make an alias or symlink named `scim` (easier than `sc-im`)
+			# TODO Decide if I want to check out a tagged commit
+			# - If it's v0.7.0, the executable is already called scim
+			# TODO Create ~/.scimrc (or better, create it in the dotfiles repo)
+		fi
 	}
 }
 
@@ -646,7 +684,7 @@ main() {
 	install_node_js
 	install_aws_cli
 	install_pdfsizeopt
-	#install_scim
+	install_scim
 	install_webp
 	install_obs
 
