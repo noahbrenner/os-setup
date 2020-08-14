@@ -305,13 +305,18 @@ install_node_js() {
 		curl -o- "$src_url" | sudo -u "$SUDO_USER" -- bash
 
 		# Load nvm and install Node.js as $SUDO_USER
+		# TODO When adding to .profile, format nicer and test for [ -d DIR ]
 		su "$SUDO_USER" --login <<-'EOF'
 			export NVM_DIR="$HOME/.nvm"
 			[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 			nvm install node
-		EOF
 
-		# TODO Install global npm packages
+			# Configure a custom location for globally-installed packages
+			mkdir "~/.npm-global"
+			echo 'PATH="~/.npm-global/bin:$PATH"' >> $HOME/.profile
+			npm config set prefix '~/.npm-global'
+			npm install --global npm
+		EOF
 	}
 }
 
@@ -736,6 +741,7 @@ main() {
 
 	install_apt_packages
 	install_snap_packages
+	install_npm_packages
 	install_pipx_packages
 
 	# TODO Register this task in function instead of inside main()
