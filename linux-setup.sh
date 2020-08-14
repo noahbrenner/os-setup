@@ -69,7 +69,7 @@ apt_ppa_repositories=()
 apt_install_custom=()
 snap_install_custom=()
 snap_install_classic_custom=()
-pip_install_custom=()
+pipx_install_custom=()
 
 
 # === Package installation: Package managers === # {{{1
@@ -215,23 +215,49 @@ install_snap_packages() {
 }
 
 snap_install=(
+	pdftk
 	syncthing
 )
 
 snap_install_classic=(
+	blender
 	slack
+)
+
+## npm packages ## {{{2
+
+install_npm_packages() {
+	if (( "${#npm_install[@]}" > 0 )); then
+		# TODO Test whether we need a login shell to get the correct PATH & ~/.npmrc
+		sudo -u "$SUDO_USER" -- npm install --global "${npm_install[@]}"
+	fi
+}
+
+npm_install=(
+	js-beautify
+	prettier
 )
 
 ## pip packages ## {{{2
 
-install_pip_packages() {
+install_pipx_packages() {
 	# https://github.com/pipxproject/pipx
-	for package in "${pip_install[@]}" "${pip_install_custom[@]}"; do
+	sudo -u "$SUDO_USER" -- python3 -m pip install --user pipx
+	# sudo -u "$SUDO_USER" -- python3 -m pipx ensurepath # Is this needed?
+
+	for package in "${pipx_install[@]}" "${pipx_install_custom[@]}"; do
+		# TODO Fix this, we currently get "sudo: pipx: command not found"
 		sudo -u "$SUDO_USER" -- pipx install "$package"
 	done
 }
 
-pip_install=(
+pipx_install=(
+	docker-compose
+	flake8 # Wrapper for pyflakes, pycodestyle, mccabe (circular complexity check)
+	  # Others to consider instead/in addition:
+		# pycodestyle # Just PEP8
+		# pylint # PEP8 & other checks
+		# pydocstyle
 	pipenv
 )
 
@@ -293,7 +319,7 @@ install_node_js() {
 ## AWS CLI ## {{{2
 
 install_aws_cli() {
-	pip_install_custom+=(awscli)
+	pipx_install_custom+=(awscli)
 	run_after_apt_install+=(__do_install_aws_cli)
 
 	__do_install_aws_cli() {
@@ -710,7 +736,7 @@ main() {
 
 	install_apt_packages
 	install_snap_packages
-	install_pip_packages
+	install_pipx_packages
 
 	# TODO Register this task in function instead of inside main()
 	# This is needed so that libdvd-pkg can install updates from source
