@@ -336,6 +336,18 @@ install_aws_cli() {
 }
 
 
+## GitHub CLI ## {{{2
+
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+# NOTE: After installation, you'll still need to run `$ gh auth login`
+
+install_github_cli() {
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+	apt_ppa_repositories+=(https://cli.github.com/packages)
+	apt_install_custom+=(gh)
+}
+
+
 ## pdfsizeopt ## {{{2
 
 # Repo: https://github.com/pts/pdfsizeopt
@@ -714,6 +726,7 @@ main() {
 	install_codecs
 	install_node_js
 	install_aws_cli
+	install_github_cli
 	install_pdfsizeopt
 	install_scim
 	install_webp
