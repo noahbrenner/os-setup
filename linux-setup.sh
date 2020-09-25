@@ -321,6 +321,31 @@ install_node_js() {
 }
 
 
+## Go (Golang) ## {{{2
+
+# Instal via gvm (Golang Version Manager): https://github.com/moovweb/gvm
+
+install_golang() {
+	run_after_apt_install+=(__do_install_golang)
+
+	__do_install_golang() {
+		su "$SUDO_USER" --login <<-'EOF'
+			gvm_install_script="https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer"
+
+			# This script installs gvm and adds a line to ~/.bashrc which loads gvm
+			bash < <(curl -s -S -L "$gvm_install_script")
+
+			# Since we're not restarting the shell, we need to load gvm manualy
+			source ~/.gvm/scripts/gvm
+
+			# Install the latest stable Go version (not beta/rc) and enable it by default
+			latest_go="$(gvm listall | tr -d ' ' | grep '^go[0-9.]*$' | tail -n 1)"
+			nvm use "$latest_go" --default
+		EOF
+	}
+}
+
+
 ## AWS CLI ## {{{2
 
 install_aws_cli() {
@@ -725,6 +750,7 @@ main() {
 	install_chrome
 	install_codecs
 	install_node_js
+	install_golang
 	install_aws_cli
 	install_github_cli
 	install_pdfsizeopt
