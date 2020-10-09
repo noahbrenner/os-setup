@@ -33,6 +33,7 @@ run_after_apt_install=()
 is_32_bit=0
 is_laptop=0
 distro=''
+SUDO_USER_HOME=''
 
 update_config() {
 	# https://www.cyberciti.biz/faq/linux-how-to-find-if-processor-is-64-bit-or-not/
@@ -48,6 +49,8 @@ update_config() {
 
 	# Likely values: 'Ubuntu', 'LinuxMint'
 	distro=$(lsb_release --id --short)
+
+	SUDO_USER_HOME=$(su "$SUDO_USER" -c 'echo $HOME')
 }
 
 
@@ -234,8 +237,7 @@ snap_install_classic=(
 
 install_npm_packages() {
 	if (( "${#npm_install[@]}" > 0 )); then
-		# TODO Test whether we need a login shell to get the correct PATH & ~/.npmrc
-		sudo -u "$SUDO_USER" -- npm install --global "${npm_install[@]}"
+		su "$SUDO_USER" --login -c "npm install --global ${npm_install[@]}"
 	fi
 }
 
@@ -248,13 +250,16 @@ npm_install=(
 
 install_pipx_packages() {
 	# https://github.com/pipxproject/pipx
-	sudo -u "$SUDO_USER" -- python3 -m pip install --user pipx
-	# sudo -u "$SUDO_USER" -- python3 -m pipx ensurepath # Is this needed?
 
-	for package in "${pipx_install[@]}" "${pipx_install_custom[@]}"; do
-		# TODO Fix this, we currently get "sudo: pipx: command not found"
-		sudo -u "$SUDO_USER" -- pipx install "$package"
-	done
+	su "$SUDO_USER" --login <<-EOF
+		python3 -m pip install --user pipx
+		python3 -m pipx ensurepath
+
+		# No quotes around vars so they aren't interpretted as single, long strings
+		for package in ${pipx_install[@]} ${pipx_install_custom[@]}; do
+			pipx install "\$package"
+		done
+	EOF
 }
 
 pipx_install=(
@@ -386,6 +391,19 @@ install_github_cli() {
 
 # Repo: https://github.com/pts/pdfsizeopt
 
+# NOTES:
+# Run without the optional dependencies: --do-require-image-optimizers=no
+# Image optimizers:
+# - advpng
+# - ECT
+# - optipng
+# - zopflipng
+# - jbig (optional)
+# - pngout (optional)
+# TODO Look into docker version? (not updated frequently, but maybe easier setup, isolated)
+# TODO Write a bash version of old pdfcompress function using pdfsizeopt and pdftk
+# TODO Also chekc out qpdf (haven't tried it yet)
+
 install_pdfsizeopt() {
 	run_after_apt_install+=(__do_install_pdfsizeopt)
 
@@ -400,40 +418,34 @@ install_pdfsizeopt() {
 		local core_archive="${version_date}/pdfsizeopt_libexec_linux-${version}.tar.gz"
 		local extraimgopt_archive="${version_date}/pdfsizeopt_libexec_extraimgopt_linux-${version}.tar.gz"
 
-		local pso_dir="/home/$SUDO_USER/src-bin/pdfsizeopt/"
-		# TODO Do this in a subshell so that the working directory doesn't change
-		# TODO Try installing dependencies separately, rather than downloading them from the repo
-		# (without the optional dependencies, use the argument: --do-require-image-optimizers=no
-		# - advpng
-		# - ECT
-		# - optipng
-		# - zopflipng
-		# - jbig (optional)
-		# - pngout (optional)
-		# TODO Add ~/pdfsizeopt to PATH
-		# TODO Look into docker version (not updated frequently, but maybe easier setup, isolated)
-		# TODO Install pdftk and write a bash version of pdfcompress function
-		# TODO Also see qpdf (haven't tried it yet)
-		sudo -u "$SUDO_USER" -- mkdir -p "$pso_dir" && cd "$pso_dir" \
-			&& curl -Lo pdfsizeopt.tar.gz "$download_base/$core_archive" \
-			&& curl -Lo pdfsizeopt-extra.tar.gz "$download_base/$extraimgopt_archive" \
-			&& tar xzvf pdfsizeopt.tar.gz && rm -f $_ \
-			&& tar xzvf pdfsizeopt-extra.tar.gz && rm -f $_ \
-			&& curl -Lo pdfsizeopt "$raw_base/pdfsizeopt.single" \
-			&& chmod +x pdfsizeopt
+		su "$SUDO_USER" --login <<-EOF
+			mkdir -p --mode=700 ~/src-bin/pdfsizeopt/ && cd \$_
 
-		# TODO implement this:
-		# 1. Create a file in the same directory named pdfsizeopt-all with the following content
-		# #!/bin/bash
-		#
-		# ~/src-bin/pdfsizeopt/pdfsizeopt \
-			#   --use-image-optimizer=sam2p,jbig2,pngout,zopflipng,optipng,advpng,ECT \
-			#   "$@"
-		#
-		# 2. make it executable and available on the PATH
-		# chmod +x pdfsizeopt-all
-		# mkdir ~/bin/
-		# ln -s $(pwd)/pdfsizeopt-all ~/bin/pdfsizeopt
+			# Download archives
+			curl -Lo pdfsizeopt.tar.gz "${download_base}/${core_archive}"
+			curl -Lo pdfsizeopt-extra.tar.gz "${download_base}/${extraimgopt_archive}"
+
+			# Extract, then delete archives
+			tar xzvf pdfsizeopt.tar.gz && rm -f \$_
+			tar xzvf pdfsizeopt-extra.tar.gz && rm -f \$_
+
+			# Get the main executable
+			curl -Lo pdfsizeopt "${raw_base}/pdfsizeopt.single"
+			chmod 700 pdfsizeopt
+
+			# Make another executable which uses additional image optimizers
+			cat > pdfsizeopt-all <<EOF_INTERNAL
+			#!/bin/bash
+			~/src-bin/pdfsizeopt/pdfsizeopt \\
+			  --use-image-optimizer=sam2p,jbig2,pngout,zopflipng,optipngdvpng,ECT \\
+			  "\$@"
+			EOF_INTERNAL
+			chmod 700 pdfsizeopt-all
+
+			# Make the custom executable available on the PATH
+			mkdir -p --mode=700 ~/bin/
+			ln -s "\$PWD/pdfsizeopt-all" ~/bin/pdfsizeopt
+		EOF
 	}
 }
 
@@ -461,22 +473,23 @@ install_scim() {
 		local repo_dir='sc-im'
 		local repo_url='git@github.com:andmarti1424/sc-im.git'
 
-		if ! [[ -d "/home/$SUDO_USER/$parent_dir/$repo_dir/src" ]]; then
+		if ! [[ -d "${SUDO_USER_HOME}/${parent_dir}/${repo_dir}/src/" ]]; then
 			local vim_msg='TODO: Set default clipboard cmd to use xclip'
 			local vim_cmd="echohl Title | echomsg '$vim_msg' | echohl None"
 
 			su --login "$SUDO_USER" <<-EOF
-				mkdir -p ~/$parent_dir/
-				cd ~/"$parent_dir/"
+				mkdir -p ~/"${parent_dir}"/ && cd \$_
 				git clone "$repo_url" "$repo_dir"
-				cd "$repo_dir/src"
+				cd "${repo_dir}/src"
 
 				# Open the Makefile for the user to edit
-				vim -c "$vim_cmd" ~/"$parent_dir/$repo_dir/src/Makefile" < /dev/tty
+				vim -c "$vim_cmd" ~/"${parent_dir}/${repo_dir}/src/Makefile" < /dev/tty
 
 				make CC=gcc YACC='bison -y' SED=sed
-				sudo make install
 			EOF
+
+			# `make install` needs to be run as root
+			(cd "${SUDO_USER_HOME}/${parent_dir}/${repo_dir}/src/"  && make install)
 
 			# TODO Make an alias or symlink named `scim` (easier than `sc-im`)
 			# TODO Decide if I want to check out a tagged commit
@@ -503,17 +516,17 @@ install_webp() {
 	__do_install_webp() {
 		local webp_version_tag='v1.0.3' # TODO Update this as needed
 
-		# TODO Make sure all these commands are actually run as SUDO_USER
-		sudo -u "$SUDO_USER" -- mkdir dev && cd ~/dev
-		sudo -u "$SUDO_USER" -- git clone https://chromium.googlesource.com/webm/libwebp \
-			&& cd libwebp
-		sudo -u "$SUDO_USER" -- git checkout -b "$webp_version_tag" "$webp_version_tag"
-		sudo -u "$SUDO_USER" -- mkdir build && cd build
-		sudo -u "$SUDO_USER" -- cmake ../
-		sudo -u "$SUDO_USER" -- make
+		su "$SUDO_USER" --login <<-EOF
+			mkdir -p --mode=700 ~/src-bin/ && cd \$_
+			git clone https://chromium.googlesource.com/webm/libwebp && cd libwebp
+			git checkout -b "$webp_version_tag" "$webp_version_tag"
+			mkdir build && cd \$_
+			cmake ../
+			make
+		EOF
 
-		# TODO Should I put this in the last command with && and sudo?
-		make install
+		# `make install` needs to be run as root
+		(cd "${SUDO_USER_HOME}/src-bin/libwebp/build" && make install)
 	}
 }
 
@@ -593,7 +606,7 @@ terminal_window_background() {
 	run_before_apt_install+=(__do_terminal_window_background)
 
 	__do_terminal_window_background() {
-		local file="/home/$SUDO_USER/.config/xfce4/terminal/terminalrc"
+		local file="$SUDO_USER_HOME/.config/xfce4/terminal/terminalrc"
 
 		if [[ -f "$file" ]]; then
 			# If the config file has a "BackgroundMode" line, delete that line
@@ -715,7 +728,7 @@ configure_git() {
 		# TODO: Revisit diff.tool config - probably gvimdiff, gvimdiff2, or gvimdiff3
 		sudo -u "$SUDO_USER" -- git config --global diff.tool 'gvimdiff3'
 		# sudo -u "$SUDO_USER" -- git config --global core.excludesfile '~/.gitignore-global'
-		# sudo -u "$SUDO_USER" -- touch "/home/$SUDO_USER/.gitignore-global"
+		# sudo -u "$SUDO_USER" -- touch "$SUDO_USER_HOME/.gitignore-global"
 		# sudo -u "$SUDO_USER" -- git config --global init.templatedir '~/.git-templates'
 		sudo -u "$SUDO_USER" -- git config --global merge.conflictstyle 'diff3'
 		sudo -u "$SUDO_USER" -- git config --global push.default 'nothing'
@@ -744,13 +757,12 @@ configure_firejail() {
 	run_after_apt_install+=(__do_configure_firejail)
 
 	__do_configure_firejail() {
-		# Set up file(s) for custom firejail permissions
-		# They will persist when updating firejail
-		# TODO Run these in a subshell or replace "~" with "/home/$SUDO_USER"
-		sudo -u "$SUDO_USER" -- mkdir ~/.config/firejail
-		sudo -u "$SUDO_USER" -- cp /etc/firejail/firefox.profile ~/.config/firejail
-		sudo -u "$SUDO_USER" -- cp /etc/firejail/chromium.profile ~/.config/firejail
-		sudo -u "$SUDO_USER" -- cp /etc/firejail/chromium-browser.profile ~/.config/firejail
+		# Copy files to set custom firejail permissions
+		# These files will persist when updating firejail
+		su "$SUDO_USER" --login <<-'EOF'
+			mkdir -p ~/.config/firejail/
+			cp /etc/firejail/{firefox,chromium,chromium-browser}.profile ~/.config/firejail/
+		EOF
 
 		# TODO Implement this, delete it, or print out a reminder to do it
 		# Always run in the firejail sandbox
@@ -766,8 +778,6 @@ configure_firejail() {
 		# Command: Prepend with "firejail "
 	}
 }
-
-
 
 
 # === MAIN EXECUTION === # {{{1

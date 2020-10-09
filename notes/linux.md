@@ -19,6 +19,9 @@ REFERENCES
 * Test for laptop vs. desktop
     - http://superuser.com/questions/877677/programatically-determine-if-an-script-is-being-executed-on-laptop-or-desktop
 
+* Run multiple bash commands as another user
+    - https://stackoverflow.com/questions/17758235/how-to-execute-a-group-of-commands-as-another-user-in-bash
+
 Info from other distros (esp. Mint)
 -----------------------------------
 
