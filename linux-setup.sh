@@ -526,6 +526,29 @@ install_obs() {
 }
 
 
+## RuneScape ## {{{2
+
+install_runescape() {
+	# Even though we're just installing through apt, we need to do so manually
+	# rather than simply adding it to the `apt_install_custom` array. This is
+	# because we need `curl`, which we can't guarantee will be installed until
+	# the main apt installs have already run.
+	run_after_apt_install+=(__do_install_runescape)
+
+	__do_install_runescape() {
+		local gpg_url='https://content.runescape.com/downloads/ubuntu/runescape.gpg.key'
+		local apt_src='deb https://content.runescape.com/downloads/ubuntu trusty non-free'
+		local apt_src_dir='/etc/apt/sources.list.d'
+
+		curl "$gpg_url" 2> /dev/null | apt-key add -
+		mkdir -p "$apt_src_dir"
+		echo "$apt_src" > "$apt_src_dir/runescape.list"
+		apt-get update
+		apt-get install --yes runescape-launcher
+	}
+}
+
+
 # === OS Configuration === # {{{1
 
 
@@ -766,6 +789,7 @@ main() {
 	install_scim
 	install_webp
 	install_obs
+	install_runescape
 
 	# Configuration setup
 	home_dir_permissions
