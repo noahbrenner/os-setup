@@ -124,6 +124,8 @@ apt_install_main=(
 	flac
 	flake
 	gimp
+	gnumeric
+		gnumeric-plugins-extra
 	inkscape
 		libimage-magick-perl
 		python-lxml
@@ -134,6 +136,7 @@ apt_install_main=(
 		libreoffice-script-provider-python
 	lilypond
 	nmap # Provides ncat for testing HTTP requests and responses
+	pandoc
 	# pdftk # Used to be in apt, but not currently -- probably install as snap
 	python3
 		idle # Or could be idle3, but both are for python3 at this point
@@ -144,11 +147,13 @@ apt_install_main=(
 	texlive-xetex
 		lmodern
 		texlive-fonts-extra
+	tmux
 	traceroute
 	tree
 	vlc
 		libdvd-pkg # This worked to play DVDs in VLC, but not in Parole
 		vlc-plugin-fluidsynth # Enables VLC to play MIDI files
+	xdotool
 	xournal # PDF editor - TODO Do I want xournal++ instead (PPA or snap)? Or okular?
 	zopfli
 
@@ -163,8 +168,6 @@ apt_install_maybe=(
 	at # Schedule a one-time command to run later
 	firejail # Sandbox, particularly useful for firefox
 	libavcodec-extra # From ubuntu-restricted-extras; Still no DVD playback, reboot?
-	libncurses5-dev # Needed to compile (and run?) sc-im
-	libncursesw5-dev # Needed to compile (and run?) sc-im
 	libhal1-flash # Only needed for Firefox to play DRM flash content
 	linkchecker # Check websites for broken links
 	python
@@ -190,6 +193,9 @@ apt_install_maybe=(
 # NOTE: Default programs are listed here: /etc/gnome/defaults.list
 apt_uninstall=(
 	vim-tiny
+
+	# Xubuntu default packages
+	parole
 
 	# Linux Mint default packages
 	gnome-orca # Screen reader
@@ -252,12 +258,15 @@ install_pipx_packages() {
 }
 
 pipx_install=(
+	bpsproxy
+	bpsrender
 	docker-compose
 	flake8 # Wrapper for pyflakes, pycodestyle, mccabe (circular complexity check)
-	  # Others to consider instead/in addition:
+		# Others to consider instead/in addition:
 		# pycodestyle # Just PEP8
 		# pylint # PEP8 & other checks
 		# pydocstyle
+	grip
 	pipenv
 )
 
