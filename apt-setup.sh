@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Require this script to be run as root with $SUDO_USER defined
-if ! ([[ "$(whoami)" == 'root' ]] && [[ -v 'SUDO_USER' ]]); then
+if [[ "$(whoami)" != 'root' ]] || [[ ! -v 'SUDO_USER' ]]; then
 	>&2 echo 'This script must be run using "sudo". Exiting...'
 	exit 1
 fi
