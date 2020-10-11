@@ -8,6 +8,12 @@ if [[ "$(whoami)" != 'root' ]] || [[ ! -v 'SUDO_USER' ]]; then
 	exit 1
 fi
 
+if ! type -p apt-get 2>&1 > /dev/null; then
+	>&2 echo 'This script requires "apt-get" to be availalbe on $PATH'
+	>&2 echo 'Are you using a different package manager?'
+	exit 1
+fi
+
 
 # === Config settings & Platform detection === # {{{1
 
